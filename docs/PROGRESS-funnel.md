@@ -7,3 +7,5 @@
 - Source org: gatewayDev. Pulled describes for Application__c and Lead; gaps recorded in the brief.
 - Scaffold committed: folder layout and .gitignore. Private repo created with gh.
 - Installed and authenticated the GitHub CLI on the work PC.
+- Settled the four open questions (see Decisions in the brief): real conversion via an Application trigger, include existing Applications, add past terms, enable audit fields.
+- Added two entry paths to the design: 40% lead-first, 60% direct (stealth) applicants, with a larger inquiry pool and deliberate email-mismatch misses for a duplicate test.

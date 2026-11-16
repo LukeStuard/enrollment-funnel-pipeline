@@ -64,6 +64,7 @@ Two independent sources, compared in the marts:
 2. Existing gateway and intake Applications are included. Their Contacts have no Leads, so they enter the funnel at the Applicant stage; marts use left joins for missing inquiry history.
 3. Term__c gains Fall 2025, Spring 2026, and Summer 2026.
 4. "Set Audit Fields upon Record Creation" is enabled for the generator, so CreatedDate is backdated on insert. SystemModstamp stays real and is the extract watermark; CreatedDate and event dates are business time.
+5. Two entry paths, mirroring a real admissions pattern: lead-first applicants (inquiry Lead, then signup, then Application, converted by the trigger) and direct "stealth" applicants (no Lead). The split is a generator setting, defaulting to 40% lead-first and 60% direct; real institutions vary widely (one sees about 80% direct). Most inquiries never apply, so the generator creates a larger Lead pool from a separate inquiry-to-applicant rate. A small share of lead-first applicants sign up with a different email, so the trigger misses them; a dbt duplicate test is expected to catch these.
 
 ## Conventions
 
