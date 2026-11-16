@@ -65,6 +65,7 @@ Two independent sources, compared in the marts:
 3. Term__c gains Fall 2025, Spring 2026, and Summer 2026.
 4. "Set Audit Fields upon Record Creation" is enabled for the generator, so CreatedDate is backdated on insert. SystemModstamp stays real and is the extract watermark; CreatedDate and event dates are business time.
 5. Two entry paths, mirroring a real admissions pattern: lead-first applicants (inquiry Lead, then signup, then Application, converted by the trigger) and direct "stealth" applicants (no Lead). The split is a generator setting, defaulting to 40% lead-first and 60% direct; real institutions vary widely (one sees about 80% direct). Most inquiries never apply, so the generator creates a larger Lead pool from a separate inquiry-to-applicant rate. A small share of lead-first applicants sign up with a different email, so the trigger misses them; a dbt duplicate test is expected to catch these.
+6. dbt Core v1.12 (dbt-duckdb 1.11.1, duckdb 1.5.6), not dbt v2. v2's DuckDB adapter is in beta and its bundled driver can't load the extensions needed to read Parquet from R2 without a separate driver install. CI runs dbt parse --use-v2-parser to keep the project v2-compatible; migrating to v2 is an optional final phase.
 
 ## Conventions
 
