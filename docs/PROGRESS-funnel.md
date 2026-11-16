@@ -30,3 +30,14 @@
   - Creating a Lead is refused ("entity type cannot be inserted"): PASS
 - Tightened Permitted Users to admin-approved with only Funnel_Extract approved; token still issues: PASS
 - Admin user's email moved from the employer address to a personal one, so org access doesn't depend on an employer inbox.
+## 2026-11-16: Phase 3 extract
+
+- R2 API token scoped to the enrollment-funnel-raw bucket only (object read, write, list), stored in Credential Manager (EnrollmentFunnel-R2). scripts/Use-FunnelEnv.ps1 sets the session's environment variables from Credential Manager; nothing on disk.
+- DuckDB (httpfs, R2 secret, r2:// URLs) handles all R2 reads and writes, so no boto3: one credential path shared by the extract and dbt.
+- extract/upload_archive.py: legacy CSVs to archive/<table>/data.parquet (1,051 leads, 770 contacts, 770 applications, 5,635 stage events).
+- extract/salesforce_extract.py: Bulk API 2.0 queryAll per object as the read-only extract user (client credentials), only the 20 fields Funnel_Extract can read. Writes salesforce/<object>/extracted_at=<UTC>/data.parquet with _extracted_at and _sobject. Raw columns kept as text; dbt applies types.
+- Incremental: watermark = max(SystemModstamp) already in R2, minus a 10-minute lookback. Overlap rows are expected and deduplicated in dbt (latest version per Id).
+- First full extract: Lead 2,373 rows = 191 live + 2,182 deleted (verified by query). queryAll returns deleted rows until Salesforce purges them, even after the Recycle Bin is emptied; staging filters on IsDeleted.
+- Second run picked up the watermark and re-pulled only the final 10 minutes of activity, as designed.
+- requests pinned (Salesforce HTTP calls); boto3 installed then removed as unneeded.
+
