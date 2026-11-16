@@ -1,0 +1,19 @@
+# Connection profiles. Safe to commit: every credential comes from an
+# environment variable (locally set by scripts/Use-FunnelEnv.ps1, in CI by
+# GitHub secrets). Run dbt from this folder so it finds this file.
+enrollment_funnel:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      # Local warehouse file, gitignored (*.duckdb).
+      path: enrollment_funnel_dev.duckdb
+      threads: 4
+      extensions:
+        - httpfs
+        - parquet
+      secrets:
+        - type: r2
+          key_id: "{{ env_var('R2_ACCESS_KEY_ID') }}"
+          secret: "{{ env_var('R2_SECRET_ACCESS_KEY') }}"
+          account_id: "{{ env_var('R2_ACCOUNT_ID') }}"

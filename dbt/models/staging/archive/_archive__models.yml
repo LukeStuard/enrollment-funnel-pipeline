@@ -1,0 +1,48 @@
+version: 2
+
+models:
+  - name: stg_archive__leads
+    description: Leads from the legacy CRM archive, one row per lead.
+    columns:
+      - name: lead_id
+        data_tests: [unique, not_null]
+      - name: status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Open - Not Contacted', 'Working - Contacted', 'Application Started', 'Closed - Converted', 'Closed - Not Converted']
+      - name: created_at
+        data_tests: [not_null]
+
+  - name: stg_archive__contacts
+    description: Contacts (applicants) from the legacy CRM archive, one row per contact.
+    columns:
+      - name: contact_id
+        data_tests: [unique, not_null]
+
+  - name: stg_archive__applications
+    description: Applications from the legacy CRM archive, one row per application.
+    columns:
+      - name: application_id
+        data_tests: [unique, not_null]
+      - name: status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Draft', 'Submitted', 'In Review', 'Admitted', 'Denied', 'Enrolled', 'Withdrawn']
+
+  - name: stg_archive__stage_events
+    description: Funnel stage changes from the legacy CRM archive, one row per event.
+    columns:
+      - name: stage_event_id
+        data_tests: [unique, not_null]
+      - name: to_stage
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Inquiry', 'Contacted', 'Application Started', 'Not Converted', 'Applicant', 'Submitted', 'In Review', 'Admitted', 'Denied', 'Enrolled', 'Withdrawn']
+      - name: event_at
+        data_tests: [not_null]

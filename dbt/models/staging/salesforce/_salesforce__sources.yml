@@ -1,0 +1,21 @@
+version: 2
+
+sources:
+  - name: salesforce
+    description: >
+      Raw Bulk API 2.0 extracts of the current admissions cycle, landed in R2 by
+      extract/salesforce_extract.py. One Parquet file per object per run; every
+      column is text exactly as the API returned it. Includes deleted rows
+      (queryAll) and repeated rows from the incremental lookback window.
+    config:
+      meta:
+        external_location: "read_parquet('{{ var('raw_root') }}/salesforce/{name}/*/*.parquet', union_by_name = true)"
+      freshness:
+        warn_after: {count: 36, period: hour}
+        error_after: {count: 72, period: hour}
+      loaded_at_field: "cast(_extracted_at as timestamp)"
+    tables:
+      - name: lead
+      - name: contact
+      - name: application
+      - name: stage_event

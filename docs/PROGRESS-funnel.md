@@ -40,4 +40,11 @@
 - First full extract: Lead 2,373 rows = 191 live + 2,182 deleted (verified by query). queryAll returns deleted rows until Salesforce purges them, even after the Recycle Bin is emptied; staging filters on IsDeleted.
 - Second run picked up the watermark and re-pulled only the final 10 minutes of activity, as designed.
 - requests pinned (Salesforce HTTP calls); boto3 installed then removed as unneeded.
+## 2026-11-16: Phase 4 part 1, dbt staging
+
+- dbt project in dbt/ (dbt-core 1.12.7, dbt-duckdb 1.11.1). profiles.yml is committed: the dev target is a local DuckDB file and the R2 secret is built only from environment variables.
+- Sources read Parquet straight from R2 (external_location with read_parquet over every extract folder). Salesforce sources have freshness checks (warn 36h, error 72h); the archive has none, since it's a one-time load.
+- Eight staging models, four per source, with one shared shape: Salesforce keeps the latest version of each Id (removes lookback duplicates) and drops deleted rows; the archive's legacy column names are mapped onto the same columns; timestamps typed (UTC), emails lowercased and trimmed, source_system added.
+- 32 tests (unique and not-null keys, accepted values for every status and stage): 40/40 passing against real R2; source freshness passing.
+- Verified offline first against a local fake lake built from generator output (raw_root var override).
 

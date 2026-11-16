@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: archive
+    description: >
+      Legacy CRM export for terms before the current cycle (Fall 2025 through
+      Fall 2026), uploaded once by extract/upload_archive.py. Its own column
+      names and LEG- keys; conversion was already recorded by the old system.
+      Every column is text.
+    config:
+      meta:
+        external_location: "read_parquet('{{ var('raw_root') }}/archive/{name}/data.parquet')"
+    tables:
+      - name: leads
+      - name: contacts
+      - name: applications
+      - name: stage_events
