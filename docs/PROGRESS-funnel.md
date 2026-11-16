@@ -47,4 +47,11 @@
 - Eight staging models, four per source, with one shared shape: Salesforce keeps the latest version of each Id (removes lookback duplicates) and drops deleted rows; the archive's legacy column names are mapped onto the same columns; timestamps typed (UTC), emails lowercased and trimmed, source_system added.
 - 32 tests (unique and not-null keys, accepted values for every status and stage): 40/40 passing against real R2; source freshness passing.
 - Verified offline first against a local fake lake built from generator output (raw_root var override).
+## 2026-11-16: Phase 4 part 2, intermediate and marts
+
+- terms seed (term calendar: start date, order, academic year); schema macro so schemas are named staging, intermediate, marts, reference.
+- Intermediate: unions of both sources (leads, contacts, applications, stage events); int_applicant_entry tags each applicant lead-first or direct via the conversion link; int_application_milestones gives the first time each application reached each stage.
+- Marts: fct_applications (entry path, milestones, outcome flags, days between stages; falls back to CreatedDate and Submitted_Date__c for demo records with no stage history), fct_stage_events, fct_funnel_by_term_program (inquiries, applicants by entry path, submitted, admitted, denied, enrolled, inquiry-to-applicant, admit and yield rates).
+- Data quality tests set to warn (known issues, not pipeline bugs): likely duplicate people, missing program of interest, missing submitted date. Hard-fail tests: relationships (applications to contacts, events to applications and leads, terms to the seed) and one row per term and program in the funnel mart (custom generic test, no packages).
+- Real data: 77 pass, 3 warn, 0 error. The duplicate test found exactly the injected email mismatches: 4 in Salesforce (the Leads the trigger couldn't convert) and 23 in the archive.
 

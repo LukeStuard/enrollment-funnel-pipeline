@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: fct_applications
+    description: One row per Application with entry path, milestones and time between stages.
+    columns:
+      - name: application_id
+        data_tests: [unique, not_null]
+      - name: entry_path
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['lead-first', 'direct']
+      - name: term
+        description: Every term must be in the terms seed.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('terms')
+                field: term
+
+  - name: fct_stage_events
+    description: One row per funnel stage change across both systems.
+    columns:
+      - name: stage_event_id
+        data_tests: [unique, not_null]
+
+  - name: fct_funnel_by_term_program
+    description: Funnel counts and rates by term and program.
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [term, program]

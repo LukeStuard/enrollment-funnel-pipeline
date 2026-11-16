@@ -1,0 +1,12 @@
+version: 2
+
+seeds:
+  - name: terms
+    description: Academic term calendar. Drives term ordering and the current-cycle flag.
+    config:
+      column_types:
+        term_start_date: date
+        term_order: integer
+    columns:
+      - name: term
+        data_tests: [unique, not_null]
