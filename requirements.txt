@@ -1,7 +1,5 @@
-@'
 # Pinned to the versions verified on 2026-11-16.
 # duckdb must stay within MotherDuck's supported client range (1.4.1 to 1.5.6 as of this date).
 duckdb==1.5.6
 dbt-core==1.12.7
 dbt-duckdb==1.11.1
-'@ | Set-Content -Encoding utf8 requirements.txt
