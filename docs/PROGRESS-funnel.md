@@ -17,3 +17,16 @@
 - Generator now splits output: data/salesforce (current cycle) and data/archive (legacy export, snake_case columns, LEG- keys). Default --applicants set to 1150 to fit.
 - Current-cycle load: 1,204 records (about 2.4 MB, 1.6 MB left), 5/5 steps clean, 41 Leads converted by the trigger, 4 deliberately unconverted (email mismatch).
 - Archive: 770 applicants, 1,051 Leads, 5,635 stage events, Fall 2025 through Fall 2026.
+## 2026-11-16: Extract integration user and client credentials
+
+- Funnel_Extract permission set: read and View All on Lead, Contact, Application__c, Stage_Event__c; Account read (required by Contact); read on 20 fields only; API Enabled; no create, edit or delete. Verified by querying ObjectPermissions in the org.
+- User funnel.extract@enrollment-funnel-pipeline.dev: last Salesforce license in gatewayDev (4 of 4 now used), Minimum Access - Salesforce profile, Salesforce CRM Content turned off (no Content feature licenses left, and not needed).
+- External Client App "Enrollment Funnel Extract", separate from the gateway and intake apps (one app per trust boundary): client credentials only, scope api only, Run As the extract user. Consumer key and secret in Credential Manager (EnrollmentFunnel-SF); scripts/GatewayCredential.ps1 copied from the gateway repo to read it.
+- Live checks as the extract user through a real client-credentials token:
+  - Token scope api only: PASS
+  - Reads all 191 generator Leads, including converted ones: PASS
+  - Reads all 761 generator stage events: PASS
+  - Applicant_Name__c (not granted) returns INVALID_FIELD: PASS
+  - Creating a Lead is refused ("entity type cannot be inserted"): PASS
+- Tightened Permitted Users to admin-approved with only Funnel_Extract approved; token still issues: PASS
+- Admin user's email moved from the employer address to a personal one, so org access doesn't depend on an employer inbox.
