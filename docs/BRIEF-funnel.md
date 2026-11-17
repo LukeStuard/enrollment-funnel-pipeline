@@ -70,7 +70,7 @@ Two independent sources, compared in the marts:
 
 ## Conventions
 
-- No CIAM data, names, or systems in this repo
+- No real institution's data, names, or systems in this repo
 - Zips and scripts named with the funnel- prefix
 - New Salesforce metadata ships with page layout and permission set steps
 - PROGRESS entry before every commit; pull at session start, push at session end
