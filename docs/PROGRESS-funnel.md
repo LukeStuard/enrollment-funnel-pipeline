@@ -95,6 +95,8 @@
 **Live-change test.** Changed a generator Application (Synthetic_Key__c FUN-A-000043) from In Review to Admitted in Salesforce, ran the workflow, and confirmed it in the snapshot: the In Review version closed (dbt_valid_to 2026-11-17 18:46:34) at the same timestamp the Admitted version opened. The dashboard rebuilt and redeployed in the same run.
 
 **Note.** Runner annotation: ubuntu-latest is migrating to Ubuntu 26. Left as is, since Python and Node come from setup actions; pin ubuntu-24.04 if a run breaks after the switch.
+**CI checks.** .github/workflows/checks.yml runs on every push to main and every pull request, with no secrets and no deploy: ruff lint (pyflakes and pycodestyle error rules, pinned in requirements-dev.txt), a fake data lake built by ci/build_test_lake.py from the seeded generator (fixed seed and as-of date, same Parquet layout as the R2 extract, Lead conversion applied the way the Application trigger does it), dbt build and source freshness against a throwaway local DuckDB (new ci target), and the dashboard build reading that file through FUNNEL_WAREHOUSE. Results match prod: 84 pass, 3 warn (27, 32, 12), 0 error. First run passed in about 1 minute.
 
-**Next.** CI checks on pull requests, then Phase 7 (README, evidence screenshots, LinkedIn post, make the repo public).
+**Cleanup.** Removed a PowerShell here-string wrapper that had been committed into .gitignore, stopped tracking dbt/.user.yml, ignored ci-lake/, and fixed two lint findings (an unused import in the extract, an f-string with no placeholders in clear.py).
 
+**Next.** Phase 7: README, evidence screenshots, LinkedIn post, make the repo public.
