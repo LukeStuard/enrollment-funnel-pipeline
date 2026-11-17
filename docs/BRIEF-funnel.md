@@ -1,6 +1,6 @@
 # Enrollment Funnel Pipeline: Brief
 
-Status: Phase 0 in progress
+Status: Phases 0 to 6 complete; Phase 7 (write-up) in progress. See PROGRESS-funnel.md for the build log.
 
 ## Goal
 
@@ -13,18 +13,18 @@ An automated ELT pipeline that turns Salesforce admissions data into a tested, v
 - dbt modeling: sources, staging, intermediate, marts, tests, docs
 - Slowly changing dimensions (dbt snapshots, SCD Type 2)
 - Hosted warehouse (MotherDuck) with a separate local dev target (DuckDB)
-- BI as code (Evidence, deployed as a static site on Cloudflare)
+- BI as code (Observable Framework, deployed as a static site on Cloudflare; planned as Evidence, see PROGRESS Phase 5)
 - Orchestration and monitoring (GitHub Actions)
 
 ## Architecture
 
-Salesforce (gatewayDev) -> Python Bulk API extract -> raw Parquet in R2 -> dbt (prod: MotherDuck, dev: local DuckDB) -> Evidence static site on Cloudflare. GitHub Actions runs the chain on a schedule.
+Salesforce (gatewayDev) -> Python Bulk API extract -> raw Parquet in R2 -> dbt (prod: MotherDuck, dev: local DuckDB) -> Observable Framework static site on Cloudflare. GitHub Actions runs the chain on a schedule.
 
 Everything runs on free tiers: Salesforce Developer Edition, R2, MotherDuck Lite, GitHub Actions, Cloudflare static hosting.
 
 ## Source org
 
-gatewayDev (orgfarm-5ea30c60fa, org ID 00DjV000006UtBhUAK), shared with Safe Agent Gateway and Safe Document Intake. Every CLI command names --target-org gatewayDev explicitly.
+gatewayDev, a Salesforce Developer Edition org shared with Safe Agent Gateway and Safe Document Intake. Every CLI command names --target-org gatewayDev explicitly.
 
 Existing objects used:
 - Application__c: Applicant__c (Contact), Program__c, Term__c, Status__c (Draft, Submitted, In Review, Admitted, Denied, Enrolled, Withdrawn), Submitted_Date__c
@@ -54,7 +54,7 @@ Two independent sources, compared in the marts:
 - Phase 2: Seeded synthetic data generator (cohorts Fall 2025 through Fall 2027, realistic conversion rates and time lags, a few deliberate data quality defects for the tests to catch)
 - Phase 3: Incremental extract to Parquet in R2
 - Phase 4: dbt project: sources and freshness, staging, intermediate, marts, snapshots, tests, docs
-- Phase 5: Evidence dashboard deployed to Cloudflare
+- Phase 5: Dashboard deployed to Cloudflare (Observable Framework; planned as Evidence)
 - Phase 6: GitHub Actions orchestration, failure alerts, live change test (edit a record in the org, see it flow through)
 - Phase 7: README, redacted evidence screenshots, LinkedIn post
 
