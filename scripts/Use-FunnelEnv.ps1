@@ -9,6 +9,7 @@ $env:SF_INSTANCE_URL  = "https://orgfarm-5ea30c60fa-dev-ed.develop.my.salesforce
 $env:SF_CLIENT_ID     = $sf.UserName
 $env:SF_CLIENT_SECRET = $sf.GetNetworkCredential().Password
 
+
 $r2 = Get-GatewayCredential -Target "EnrollmentFunnel-R2"
 $env:R2_ACCOUNT_ID        = "e0c21530d52ee1a25cbb8a6853b02168"
 $env:R2_ACCESS_KEY_ID     = $r2.UserName
@@ -23,5 +24,10 @@ $env:MOTHERDUCK_TOKEN = $md.GetNetworkCredential().Password
 $dash = Get-GatewayCredential -Target "EnrollmentFunnel-MotherDuck-RO"
 $env:DASHBOARD_MOTHERDUCK_TOKEN = $dash.GetNetworkCredential().Password
 
+# Wrangler deploys: personal-account API token (Workers Scripts edit only).
+# Set here so it overrides any other Wrangler OAuth login on this machine
+$env:CLOUDFLARE_API_TOKEN  = (Get-GatewayCredential -Target "EnrollmentFunnel-Cloudflare").GetNetworkCredential().Password
+$env:CLOUDFLARE_ACCOUNT_ID = $env:R2_ACCOUNT_ID
+
 Remove-Variable sf, r2, md, dash
-Write-Host "Funnel environment set for this session (Salesforce extract user, R2, MotherDuck pipeline and dashboard accounts)."
+Write-Host "Funnel environment set for this session (Salesforce extract user, R2, MotherDuck pipeline, dashboard accounts, and Cloudflare deploy)."

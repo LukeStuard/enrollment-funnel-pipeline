@@ -4,3 +4,4 @@ node_modules/
 yarn-error.log
 src/.observablehq/cache/
 __pycache__/
+.wrangler/

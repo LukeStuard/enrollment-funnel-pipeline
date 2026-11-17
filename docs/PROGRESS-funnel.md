@@ -78,5 +78,7 @@
 - Inline expressions get their own wrapper, so cards placed inline stacked instead of filling the grid. Card rows are now built with display(html`...`) in a code block.
 - Facet labels on the timing plot were clipped; added marginRight.
 
-**Next.** Deploy the static build to Cloudflare (Workers static assets).
+**Deploy.** Static build deployed to Cloudflare Workers static assets (no Worker script) at https://enrollment-funnel-dashboard.lstua001.workers.dev. wrangler.jsonc pins account_id to the personal account, and Wrangler authenticates with a custom API token from Credential Manager (CLOUDFLARE_API_TOKEN in Use-FunnelEnv.ps1), which overrides any other OAuth login on the machine. The token is scoped to the personal account only: Workers Scripts edit, Account Settings read, Workers Tail read, Workers Observability edit, plus user details and memberships read. No zone, R2, KV or Pages access; the Edit Cloudflare Workers template was rejected because it now includes R2 Storage edit and other unneeded permissions. Clean URLs come from html_handling auto-trailing-slash; src/404.md gives a themed 404 page with not_found_handling 404-page. Also fixed clipped facet labels on Programs (marginRight).
+
+**Next.** Phase 6: GitHub Actions for extract, dbt build, dashboard build and deploy, with its own CI token.
 

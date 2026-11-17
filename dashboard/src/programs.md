@@ -41,6 +41,7 @@ const long = programs.flatMap((p) => [
   <h2>Admit rate and yield by program</h2>
   <h3>Completed terms only.</h3>
   ${resize((width) => Plot.plot({
+    marginRight: 90,
     width,
     height: 260,
     marginLeft: 170,
