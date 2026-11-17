@@ -1,4 +1,3 @@
-@'
 # Salesforce CLI local state
 .sf/
 .sfdx/
@@ -25,6 +24,7 @@ __pycache__/
 dbt/target/
 dbt/dbt_packages/
 dbt/logs/
+dbt/.user.yml
 logs/
 
 # Evidence / Node
@@ -36,9 +36,9 @@ dashboard/src/.observablehq/cache/
 *.parquet
 data/
 !dashboard/src/data/
+ci-lake/
 
 # OS / editor
 .DS_Store
 Thumbs.db
 .vscode/
-'@ | Set-Content -Encoding utf8 .gitignore

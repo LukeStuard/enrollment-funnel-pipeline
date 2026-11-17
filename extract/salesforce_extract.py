@@ -20,7 +20,6 @@ Auth: OAuth client credentials as the read-only extract user
 """
 
 import argparse
-import os
 import sys
 import tempfile
 import time

@@ -1,0 +1,7 @@
+# Lint settings for the checks workflow (.github/workflows/checks.yml).
+# Pyflakes (F) and pycodestyle errors (E4, E7, E9): real bugs such as undefined
+# names, unused imports and syntax errors, not style preferences.
+target-version = "py313"
+
+[lint]
+select = ["E4", "E7", "E9", "F"]

@@ -1,0 +1,3 @@
+# Pipeline dependencies plus the tools the checks workflow uses.
+-r requirements.txt
+ruff==0.17.5

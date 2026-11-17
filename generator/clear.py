@@ -47,7 +47,7 @@ def main():
                  "--line-ending", "LF", "--wait", "30")
         if res.get("status") != 0:
             sys.exit(f"Delete failed for {sobject}: {res.get('message')}")
-        print(f"  deleted")
+        print("  deleted")
 
     if not args.yes:
         print("\nDry run. Rerun with --yes to delete these records.")

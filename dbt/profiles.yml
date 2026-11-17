@@ -35,3 +35,9 @@ enrollment_funnel:
           secret: "{{ env_var('R2_SECRET_ACCESS_KEY') }}"
           account_id: "{{ env_var('R2_ACCOUNT_ID') }}"
           region: auto
+    ci:
+      type: duckdb
+      # Checks workflow only: a throwaway local file built from the fake lake
+      # (ci/build_test_lake.py). No credentials; gitignored (*.duckdb).
+      path: enrollment_funnel_ci.duckdb
+      threads: 4

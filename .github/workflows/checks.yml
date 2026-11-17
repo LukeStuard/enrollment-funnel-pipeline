@@ -1,0 +1,67 @@
+name: Checks
+
+# Runs on every push to main and every pull request. Needs no secrets: dbt
+# builds a throwaway local DuckDB from a fake lake made by the seeded generator,
+# and the dashboard builds from that file. Nothing is deployed.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  OBSERVABLE_TELEMETRY_DISABLE: "true"
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements*.txt
+
+      - name: Install Python dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Lint Python (ruff)
+        run: ruff check .
+
+      - name: Build fake data lake from the generator
+        run: python ci/build_test_lake.py --out ci-lake
+
+      - name: Build and test dbt models against the fake lake
+        working-directory: dbt
+        run: |
+          dbt build --target ci --vars "{raw_root: $GITHUB_WORKSPACE/ci-lake}"
+
+      - name: Check source freshness against the fake lake
+        working-directory: dbt
+        run: |
+          dbt source freshness --target ci --vars "{raw_root: $GITHUB_WORKSPACE/ci-lake}"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: Install dashboard dependencies
+        working-directory: dashboard
+        run: npm ci
+
+      - name: Build dashboard from the CI warehouse
+        working-directory: dashboard
+        env:
+          FUNNEL_WAREHOUSE: ${{ github.workspace }}/dbt/enrollment_funnel_ci.duckdb
+        run: npm run build
