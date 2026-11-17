@@ -37,6 +37,10 @@ jobs:
       - name: Lint Python (ruff)
         run: ruff check .
 
+      - name: Check dbt v2 compatibility (v2 parser)
+        working-directory: dbt
+        run: dbt parse --target ci --use-v2-parser
+
       - name: Build fake data lake from the generator
         run: python ci/build_test_lake.py --out ci-lake
 
