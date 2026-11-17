@@ -83,7 +83,7 @@ const long = terms.flatMap((t) => stages.map((s) => ({term: t.term, stage: stage
 </div>
 
 ```js
-const rates = terms.flatMap((t) => [
+const rates = done.flatMap(((t) => [
   {term: t.term, rate: "Inquiry to applicant (lead-first)", value: t.inquiries ? t.lead_first / t.inquiries : null},
   {term: t.term, rate: "Admit rate", value: t.admitted + t.denied ? t.admitted / (t.admitted + t.denied) : null},
   {term: t.term, rate: "Yield", value: t.admitted ? t.enrolled / t.admitted : null}
@@ -92,10 +92,11 @@ const rates = terms.flatMap((t) => [
 
 <div class="card">
   <h2>Conversion rates by term</h2>
+  <h3>Completed terms only; current-cycle rates are still moving.</h3>
   ${resize((width) => Plot.plot({
     width,
     height: 300,
-    x: {domain: termOrder, label: null},
+    x: {domain: done.map((d) => d.term), label: null},
     y: {domain: [0, 1], tickFormat: "%", grid: true, label: "Rate"},
     color: {legend: true},
     marks: [
