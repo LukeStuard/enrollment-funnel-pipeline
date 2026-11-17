@@ -83,7 +83,7 @@ const long = terms.flatMap((t) => stages.map((s) => ({term: t.term, stage: stage
 </div>
 
 ```js
-const rates = done.flatMap(((t) => [
+const rates = done.flatMap((t) => [
   {term: t.term, rate: "Inquiry to applicant (lead-first)", value: t.inquiries ? t.lead_first / t.inquiries : null},
   {term: t.term, rate: "Admit rate", value: t.admitted + t.denied ? t.admitted / (t.admitted + t.denied) : null},
   {term: t.term, rate: "Yield", value: t.admitted ? t.enrolled / t.admitted : null}
