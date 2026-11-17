@@ -82,3 +82,19 @@
 
 **Next.** Phase 6: GitHub Actions for extract, dbt build, dashboard build and deploy, with its own CI token.
 
+## Phase 6: Scheduled pipeline in GitHub Actions (2026-11-17)
+
+**Workflow.** .github/workflows/pipeline.yml runs daily at 14:17 UTC and on demand (workflow_dispatch): extract (Bulk API 2.0 to R2), dbt source freshness, dbt build --target prod (seeds, models, snapshots, tests), Observable Framework build, wrangler deploy. checkout, setup-python (3.13, pip cache) and setup-node (24, npm cache from dashboard/package-lock.json) are all at v7. Concurrency group prevents overlapping runs; 30-minute timeout. A full run takes about 2 minutes.
+
+**Secrets.** Repo secrets: SF_CLIENT_ID, SF_CLIENT_SECRET, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, MOTHERDUCK_TOKEN, DASHBOARD_MOTHERDUCK_TOKEN, CLOUDFLARE_API_TOKEN. Repo variables (not secret): SF_INSTANCE_URL, R2_ACCOUNT_ID. Copied from the loaded local environment with gh secret set --body, never printed. Secrets are scoped to the steps that need them, not the job, so third-party npm install scripts can't read them. Workflow permissions: contents read.
+
+**CI deploy token.** Separate Cloudflare custom token, enrollment-funnel-ci, personal account only: Workers Scripts edit and Account Settings read. No tail, observability, or user-level permissions; stored only in GitHub, not Credential Manager.
+
+**Fix.** First run failed at the dashboard build (Not found: /data/dq_issues.csv). The root .gitignore rule data/ matched dashboard/src/data/, so the data loaders had never been committed; local builds worked from Framework's cache. Added !dashboard/src/data/ after it and committed the loaders.
+
+**Live-change test.** Changed a generator Application (Synthetic_Key__c FUN-A-000043) from In Review to Admitted in Salesforce, ran the workflow, and confirmed it in the snapshot: the In Review version closed (dbt_valid_to 2026-11-17 18:46:34) at the same timestamp the Admitted version opened. The dashboard rebuilt and redeployed in the same run.
+
+**Note.** Runner annotation: ubuntu-latest is migrating to Ubuntu 26. Left as is, since Python and Node come from setup actions; pin ubuntu-24.04 if a run breaks after the switch.
+
+**Next.** CI checks on pull requests, then Phase 7 (README, evidence screenshots, LinkedIn post, make the repo public).
+
