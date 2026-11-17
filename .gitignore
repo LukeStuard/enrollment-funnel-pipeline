@@ -35,6 +35,7 @@ dashboard/src/.observablehq/cache/
 # Generated data
 *.parquet
 data/
+!dashboard/src/data/
 
 # OS / editor
 .DS_Store
