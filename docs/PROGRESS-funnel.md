@@ -61,4 +61,22 @@
 - MotherDuck: service account funnel_pipeline with a Read/Write token (Credential Manager: EnrollmentFunnel-MotherDuck; Use-FunnelEnv.ps1 sets MOTHERDUCK_TOKEN). Database enrollment_funnel created as the service account, so it belongs to the service account.
 - prod target (md:enrollment_funnel). R2 reads run in MotherDuck's cloud engine using the temporary R2 secret; first prod build failed because the cloud engine sent its own AWS region (us-west-2), which R2 rejects. Fixed with region: auto on the R2 secret in both targets.
 - Prod and dev: 81 pass, 3 warn (the deliberate defects), 0 error.
+## Phase 5: Dashboard (2026-11-16)
+
+**Tool change.** The planned Evidence template has become Evidence Studio, a hosted product with its own CLI and a required account. Switched to Observable Framework 1.13.4: a static site generator whose Python data loaders query the warehouse at build time, so the published site holds only pre-aggregated CSVs and never connects to the database from the browser.
+
+**Pages.** Overview (KPI cards, funnel by term, conversion rates by term), Programs, Entry paths (lead-first vs. direct), Time between stages (box plots by program), Data quality. Every page has an origin toggle: synthetic data set only, or including the hand-made demo records.
+
+**Read-only access.** MotherDuck Lite has no read scaling tokens and no filtered shares (INCLUDE_PATTERN is not enabled on Lite). The dashboard uses a second service account, funnel_dashboard, that reads a restricted, hidden share of enrollment_funnel instead of the database itself. Verified: the share returns rows (45 from the funnel mart) and CREATE is refused. Tradeoff: on this plan the share covers the whole database rather than only the marts schema; the loaders query marts only.
+
+**New mart.** dq_issues: one row per flagged record for likely_duplicate_person, missing_program_interest and missing_submitted_date, built from the same rules as the warn-level dbt tests, so the page counts and the build warnings always agree (27, 32, 12).
+
+**Privacy.** The applications loader excludes names and contact details. The data quality detail shows the synthetic example.com emails only, so the person-matching defect can be seen.
+
+**Fixes during build.**
+- A FileAttachment resolves to its data only in other code blocks; loading and using it in the same block gave a pending promise (issues.map is not a function). Load and use are now separate blocks.
+- Inline expressions get their own wrapper, so cards placed inline stacked instead of filling the grid. Card rows are now built with display(html`...`) in a code block.
+- Facet labels on the timing plot were clipped; added marginRight.
+
+**Next.** Deploy the static build to Cloudflare (Workers static assets).
 

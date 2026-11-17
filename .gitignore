@@ -29,8 +29,8 @@ logs/
 
 # Evidence / Node
 node_modules/
-dashboard/build/
-dashboard/.evidence/
+dashboard/dist/
+dashboard/src/.observablehq/cache/
 
 # Generated data
 *.parquet

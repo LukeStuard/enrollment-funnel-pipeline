@@ -17,5 +17,11 @@ $env:R2_SECRET_ACCESS_KEY = $r2.GetNetworkCredential().Password
 $md = Get-GatewayCredential -Target "EnrollmentFunnel-MotherDuck"
 $env:MOTHERDUCK_TOKEN = $md.GetNetworkCredential().Password
 
-Remove-Variable sf, r2, md
-Write-Host "Funnel environment set for this session (Salesforce extract user, R2, MotherDuck service account)."
+# Dashboard data loaders: the funnel_dashboard service account, which can only
+# read the enrollment_funnel share. Separate variable so it never replaces the
+# pipeline's MOTHERDUCK_TOKEN.
+$dash = Get-GatewayCredential -Target "EnrollmentFunnel-MotherDuck-RO"
+$env:DASHBOARD_MOTHERDUCK_TOKEN = $dash.GetNetworkCredential().Password
+
+Remove-Variable sf, r2, md, dash
+Write-Host "Funnel environment set for this session (Salesforce extract user, R2, MotherDuck pipeline and dashboard accounts)."

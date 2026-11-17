@@ -38,3 +38,13 @@ models:
       - unique_combination:
           arguments:
             columns: [term, program, origin]
+
+  - name: dq_issues
+    description: One row per record flagged by a known data quality check (same rules as the warn-level tests), for the dashboard.
+    columns:
+      - name: check_name
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['likely_duplicate_person', 'missing_program_interest', 'missing_submitted_date']
