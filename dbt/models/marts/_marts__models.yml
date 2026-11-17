@@ -6,6 +6,12 @@ models:
     columns:
       - name: application_id
         data_tests: [unique, not_null]
+      - name: origin
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['generator', 'demo']
       - name: entry_path
         data_tests:
           - not_null
@@ -27,8 +33,8 @@ models:
         data_tests: [unique, not_null]
 
   - name: fct_funnel_by_term_program
-    description: Funnel counts and rates by term and program.
+    description: Funnel counts and rates by term, program and origin (generator or demo).
     data_tests:
       - unique_combination:
           arguments:
-            columns: [term, program]
+            columns: [term, program, origin]

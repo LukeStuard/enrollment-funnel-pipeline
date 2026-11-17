@@ -24,6 +24,7 @@ select
     a.application_id,
     a.application_number,
     a.source_system,
+    a.origin,
     a.contact_id,
     e.lead_id,
     e.entry_path,

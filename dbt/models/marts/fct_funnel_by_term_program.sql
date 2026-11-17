@@ -1,4 +1,6 @@
--- Funnel counts and rates by term and program, ready for the dashboard.
+-- Funnel counts and rates by term, program and origin, ready for the dashboard.
+-- Filter origin = 'generator' for the synthetic funnel alone; 'demo' rows are
+-- records the gateway and intake projects created in the shared org.
 --   inquiries:                Leads interested in that term and program
 --   applicants:               Applications, split by entry path
 --   inquiry_to_applicant_rate: lead-first applicants / inquiries
@@ -9,16 +11,18 @@ with inquiries as (
     select
         term_interest                         as term,
         coalesce(program_interest, 'Unknown') as program,
+        origin,
         count(*)                              as inquiries
     from {{ ref('int_leads') }}
     where term_interest is not null
-    group by 1, 2
+    group by 1, 2, 3
 ),
 
 apps as (
     select
         term,
         program,
+        origin,
         count(*)                                          as applicants,
         count(*) filter (where entry_path = 'lead-first') as lead_first_applicants,
         count(*) filter (where entry_path = 'direct')     as direct_applicants,
@@ -27,13 +31,14 @@ apps as (
         count(*) filter (where is_denied)                 as denied,
         count(*) filter (where is_enrolled)               as enrolled
     from {{ ref('fct_applications') }}
-    group by 1, 2
+    group by 1, 2, 3
 ),
 
 joined as (
     select
         coalesce(a.term, i.term)          as term,
         coalesce(a.program, i.program)    as program,
+        coalesce(a.origin, i.origin)      as origin,
         coalesce(i.inquiries, 0)          as inquiries,
         coalesce(a.applicants, 0)         as applicants,
         coalesce(a.lead_first_applicants, 0) as lead_first_applicants,
@@ -44,7 +49,7 @@ joined as (
         coalesce(a.enrolled, 0)           as enrolled
     from apps a
     full outer join inquiries i
-        on i.term = a.term and i.program = a.program
+        on i.term = a.term and i.program = a.program and i.origin = a.origin
 )
 
 select
@@ -53,6 +58,7 @@ select
     t.term_start_date,
     t.term_start_date > current_date as is_current_cycle,
     j.program,
+    j.origin,
     j.inquiries,
     j.applicants,
     j.lead_first_applicants,

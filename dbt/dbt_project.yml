@@ -27,6 +27,10 @@ models:
       +materialized: table
       +schema: marts
 
+snapshots:
+  enrollment_funnel:
+    +schema: snapshots
+
 seeds:
   enrollment_funnel:
     +schema: reference

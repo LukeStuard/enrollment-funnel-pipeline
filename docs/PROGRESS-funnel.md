@@ -54,4 +54,11 @@
 - Marts: fct_applications (entry path, milestones, outcome flags, days between stages; falls back to CreatedDate and Submitted_Date__c for demo records with no stage history), fct_stage_events, fct_funnel_by_term_program (inquiries, applicants by entry path, submitted, admitted, denied, enrolled, inquiry-to-applicant, admit and yield rates).
 - Data quality tests set to warn (known issues, not pipeline bugs): likely duplicate people, missing program of interest, missing submitted date. Hard-fail tests: relationships (applications to contacts, events to applications and leads, terms to the seed) and one row per term and program in the funnel mart (custom generic test, no packages).
 - Real data: 77 pass, 3 warn, 0 error. The duplicate test found exactly the injected email mismatches: 4 in Salesforce (the Leads the trigger couldn't convert) and 23 in the archive.
+## 2026-11-16: Phase 4 part 3, origin, snapshots, MotherDuck prod
+
+- origin column (generator or demo) on the intermediate models and marts, and part of the funnel mart's grain (term, program, origin). Demo = records the gateway and intake projects created in the shared org; confirmed they explained Spring 2027's 7 enrollments (51 demo vs 124 generator applications, 0 generator enrolled).
+- Snapshots (SCD Type 2, timestamp strategy on modified_at, hard deletes invalidate) on Salesforce Applications and Leads. Tested locally: a Draft to Submitted change produced two versions with correct valid-from and valid-to.
+- MotherDuck: service account funnel_pipeline with a Read/Write token (Credential Manager: EnrollmentFunnel-MotherDuck; Use-FunnelEnv.ps1 sets MOTHERDUCK_TOKEN). Database enrollment_funnel created as the service account, so it belongs to the service account.
+- prod target (md:enrollment_funnel). R2 reads run in MotherDuck's cloud engine using the temporary R2 secret; first prod build failed because the cloud engine sent its own AWS region (us-west-2), which R2 rejects. Fixed with region: auto on the R2 secret in both targets.
+- Prod and dev: 81 pass, 3 warn (the deliberate defects), 0 error.
 

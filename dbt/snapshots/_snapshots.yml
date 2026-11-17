@@ -1,0 +1,26 @@
+version: 2
+
+# SCD Type 2 history captured by the warehouse itself. Each `dbt snapshot`
+# compares the current staging rows with the last captured version and records
+# changes with dbt_valid_from / dbt_valid_to. This history is independent of
+# Stage_Event__c: it only knows what it has seen at each run, so it starts on
+# the first run and can miss changes that happen and revert between runs.
+# Only Salesforce is snapshotted; the archive never changes.
+snapshots:
+  - name: snap_salesforce_applications
+    relation: ref('stg_salesforce__applications')
+    description: Every version of each Salesforce Application, keyed on application_id.
+    config:
+      unique_key: application_id
+      strategy: timestamp
+      updated_at: modified_at
+      hard_deletes: invalidate
+
+  - name: snap_salesforce_leads
+    relation: ref('stg_salesforce__leads')
+    description: Every version of each Salesforce Lead, keyed on lead_id.
+    config:
+      unique_key: lead_id
+      strategy: timestamp
+      updated_at: modified_at
+      hard_deletes: invalidate

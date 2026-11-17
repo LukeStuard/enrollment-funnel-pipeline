@@ -17,3 +17,21 @@ enrollment_funnel:
           key_id: "{{ env_var('R2_ACCESS_KEY_ID') }}"
           secret: "{{ env_var('R2_SECRET_ACCESS_KEY') }}"
           account_id: "{{ env_var('R2_ACCOUNT_ID') }}"
+          region: auto
+    prod:
+      type: duckdb
+      # MotherDuck database owned by the funnel_pipeline service account.
+      # The token comes from the MOTHERDUCK_TOKEN environment variable, never
+      # from this file. R2 reads run in MotherDuck's cloud engine, which uses
+      # the temporary R2 secret below.
+      path: "md:enrollment_funnel"
+      threads: 4
+      extensions:
+        - httpfs
+        - parquet
+      secrets:
+        - type: r2
+          key_id: "{{ env_var('R2_ACCESS_KEY_ID') }}"
+          secret: "{{ env_var('R2_SECRET_ACCESS_KEY') }}"
+          account_id: "{{ env_var('R2_ACCOUNT_ID') }}"
+          region: auto

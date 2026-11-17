@@ -14,5 +14,8 @@ $env:R2_ACCOUNT_ID        = "e0c21530d52ee1a25cbb8a6853b02168"
 $env:R2_ACCESS_KEY_ID     = $r2.UserName
 $env:R2_SECRET_ACCESS_KEY = $r2.GetNetworkCredential().Password
 
-Remove-Variable sf, r2
-Write-Host "Funnel environment set for this session (Salesforce extract user, R2)."
+$md = Get-GatewayCredential -Target "EnrollmentFunnel-MotherDuck"
+$env:MOTHERDUCK_TOKEN = $md.GetNetworkCredential().Password
+
+Remove-Variable sf, r2, md
+Write-Host "Funnel environment set for this session (Salesforce extract user, R2, MotherDuck service account)."
