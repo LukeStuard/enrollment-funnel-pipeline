@@ -9,7 +9,7 @@ An automated ELT pipeline that turns Salesforce admissions data into a tested, v
 
 All data is synthetic. The project rebuilds the idea behind a real enrollment funnel workbook with a modern data stack; no real institution's data, names or systems are used.
 
-<!-- SCREENSHOT: docs/images/dashboard-overview.png (Funnel overview page, no browser chrome) -->
+![Funnel overview page of the dashboard](docs/images/dashboard-overview.png)
 
 ## Architecture
 
@@ -86,6 +86,8 @@ It also injects known data quality defects, so the tests have something real to 
 | Snapshots | 2 | SCD Type 2 history of Salesforce Applications and Leads |
 | Seed | `terms` | Term calendar: start dates, ordering, academic year |
 
+![dbt lineage graph: sources, staging, intermediate, marts, snapshots and tests](docs/images/dbt-lineage.png)
+
 **Tests** come at two levels:
 
 - **Hard failures** for pipeline bugs: unique and not-null keys, accepted values for every status and stage, relationships between applications, contacts, leads and events, and one row per term and program in the funnel mart.
@@ -103,7 +105,7 @@ Pages: funnel overview, programs, entry paths (lead-first vs. direct), time betw
 
 The applications data the site publishes has no names, emails or phone numbers.
 
-<!-- SCREENSHOT: docs/images/dashboard-data-quality.png (Data quality page) -->
+![Data quality page: known issues flagged by the same rules as the dbt warnings](docs/images/dashboard-data-quality.png)
 
 ### 6. Orchestration
 
@@ -114,7 +116,7 @@ Two GitHub Actions workflows:
 
 The two cover different things. Checks proves the pipeline's internals still fit together after a code change, using fake data shaped exactly like the real lake (its test results match production: the same three warnings with the same counts). Pipeline proves the connections to the outside services work, with real data.
 
-<!-- SCREENSHOT: docs/images/actions-runs.png (Actions tab showing green Pipeline and Checks runs) -->
+![GitHub Actions runs for the Pipeline and Checks workflows](docs/images/actions-runs.png)
 
 ## Proof: a live change, end to end
 
@@ -127,7 +129,7 @@ To confirm the pipeline and the snapshots work on real changes, one generator Ap
 
 The old version closed at the exact second the new one opened: the record's SystemModstamp from the Salesforce edit. The change traveled from Salesforce through the extract, R2 and dbt into the warehouse's history, and the dashboard rebuilt and redeployed in the same run.
 
-<!-- SCREENSHOT: docs/images/snapshot-live-change.png (dbt show output above) -->
+![dbt show output: both snapshot versions of the changed application](docs/images/snapshot-live-change.png)
 
 ## Security model
 
