@@ -100,3 +100,18 @@
 **Cleanup.** Removed a PowerShell here-string wrapper that had been committed into .gitignore, stopped tracking dbt/.user.yml, ignored ci-lake/, and fixed two lint findings (an unused import in the extract, an f-string with no placeholders in clear.py).
 
 **Next.** Phase 7: README, evidence screenshots, LinkedIn post, make the repo public.
+## Phase 7: Write-up and publication (2026-11-17)
+
+**CI addition.** Checks now runs dbt parse with the v2 parser (bundled with dbt-core 1.12.7 as dbt-core-experimental-parser), as the brief promised, so the project stays dbt v2-compatible.
+
+**README.** Architecture diagram (Mermaid), how each layer works, security model, decisions and tradeoffs, the live-change snapshot proof, and how to run it with or without accounts. Five evidence screenshots in docs/images: dashboard overview, data quality page, Actions runs, the snapshot live change, and the dbt lineage graph.
+
+**Brief cleanup.** Status line updated, Evidence references replaced with Observable Framework, org identifiers removed, and the no-real-data convention generalized so it doesn't name an employer.
+
+**Pre-publication audit.** Every secret value checked against the full git history with git log -S (values never printed): all clean. Employer references across all commits: only the old wording of the convention line in the brief; fixed going forward, history left as is.
+
+**Dashboard fix.** Conversion rates by term now plot completed terms only. In-flight terms showed a 0% yield (no enrollments yet for terms that haven't started), which read as a pipeline bug.
+
+**Known limitation.** Checks doesn't catch JavaScript errors in dashboard pages: Framework renders a page's syntax error inline instead of failing the build, so a broken chart passes CI. Mitigation: preview locally (npm run dev) before pushing page changes. A parser check over the pages' js blocks would close this if more people edit the dashboard.
+
+**Status.** Complete. Repo made public.
